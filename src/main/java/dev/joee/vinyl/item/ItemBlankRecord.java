@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
+import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
 import turniplabs.halplibe.helper.EnvironmentHelper;
@@ -38,7 +39,7 @@ public class ItemBlankRecord extends Item {
 
 	@Override
 	public boolean onUseItemOnBlock(ItemStack stack, Player player, World world, int x, int y, int z, Side side, double xPlaced, double yPlaced) {
-		if (world.getBlockId(x, y, z) != Vinyl.vinylPress.id() || world.getBlockMetadata(x, y, z) != 0) {
+		if (world.getBlockId(x, y, z) != Vinyl.vinylPress.id()) {
 			return false;
 		}
 
@@ -57,9 +58,11 @@ public class ItemBlankRecord extends Item {
 			return false;
 		}
 
+		world.setBlockWithNotify(x, y, z, Vinyl.vinylPressActive.id());
+
 		TileEntityVinylPress te = (TileEntityVinylPress) world.getTileEntity(x, y, z);
 		te.stack = stack.copy();
-		world.updateTileEntityChunkAndSendToPlayer(x, y, z, te);
+		te.setChanged();
 
 		stack.consumeItem(player);
 
@@ -70,6 +73,10 @@ public class ItemBlankRecord extends Item {
 		filePathFuture.thenAccept(filePath -> {
 			Vinyl.LOGGER.info("Finished downloading {}", filePath);
 
+			if (world.getBlockId(x, y, z) != Vinyl.vinylPressActive.id()) {
+				return;
+			}
+
 			ItemStack newStack = Vinyl.customRecord.getDefaultStack();
 
 			CompoundTag oldData = te.stack.getData();
@@ -78,7 +85,40 @@ public class ItemBlankRecord extends Item {
 			newData.putString("RecordArtist", oldData.getString("RecordArtist"));
 			newData.putString("RecordFilePath", filePath);
 
-			te.stack = newStack;
+			TileEntityVinylPress.shouldDropContents = false;
+
+			world.setBlockWithNotify(x, y, z, Vinyl.vinylPress.id());
+
+			TileEntityVinylPress newTileEntity = new TileEntityVinylPress(newStack);
+			world.setTileEntity(x, y, z, newTileEntity);
+
+			TileEntityVinylPress.shouldDropContents = true;
+
+			world.playSoundEffect(
+				null, SoundCategory.WORLD_SOUNDS,
+				((float) x + 0.5F), ((float) y + 0.5F), ((float) z + 0.5F),
+				"random.fizz", 0.5F,
+				2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F
+			);
+
+			for (int i = 0; i < 5; i++) {
+				world.spawnParticle(
+					"smoke", x - 0.1F, y + 0.5F, z + world.rand.nextFloat(),
+					0, 0.1, 0, 0
+				);
+				world.spawnParticle(
+					"smoke", x + 1.1F, y + 0.5F, z + world.rand.nextFloat(),
+					0, 0.1, 0, 0
+				);
+				world.spawnParticle(
+					"smoke", x + world.rand.nextFloat(), y + 0.5F, z - 0.1F,
+					0, 0.1, 0, 0
+				);
+				world.spawnParticle(
+					"smoke", x + world.rand.nextFloat(), y + 0.5F, z + 1.1F,
+					0, 0.1, 0, 0
+				);
+			}
 		});
 
 		return true;

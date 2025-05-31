@@ -1,5 +1,7 @@
 package dev.joee.vinyl;
 
+import dev.joee.vinyl.model.BlockModelVinylPress;
+import dev.joee.vinyl.model.BlockModelVinylPressActive;
 import dev.joee.vinyl.model.ItemModelBlankRecord;
 import dev.joee.vinyl.model.ItemModelCustomRecord;
 import net.minecraft.client.render.EntityRenderDispatcher;
@@ -13,7 +15,8 @@ import turniplabs.halplibe.util.ModelEntrypoint;
 public class InitModels implements ModelEntrypoint {
 	@Override
 	public void initBlockModels(BlockModelDispatcher dispatcher) {
-
+		ModelHelper.setBlockModel(Vinyl.vinylPress, BlockModelVinylPress::new);
+		ModelHelper.setBlockModel(Vinyl.vinylPressActive, BlockModelVinylPressActive::new);
 	}
 
 	@Override

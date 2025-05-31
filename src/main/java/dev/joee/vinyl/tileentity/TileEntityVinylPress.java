@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 public class TileEntityVinylPress extends TileEntity {
 	public @Nullable ItemStack stack;
 
+	public static boolean shouldDropContents = true;
+
 	public TileEntityVinylPress() {
 
 	}
@@ -37,7 +39,7 @@ public class TileEntityVinylPress extends TileEntity {
 	@Override
 	public void dropContents(World world, int x, int y, int z) {
 		super.dropContents(world, x, y, z);
-		if (this.stack != null) {
+		if (this.stack != null && shouldDropContents) {
 			world.dropItem(x, y, z, this.stack);
 			this.stack = null;
 		}

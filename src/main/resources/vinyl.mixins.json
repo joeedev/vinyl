@@ -4,7 +4,7 @@
     "package": "dev.joee.vinyl.mixin",
     "compatibilityLevel": "JAVA_8",
     "mixins": [
-      "NetworkManagerMixin", "PacketMixin", "SaveHandlerBaseMixin"
+      "BlockLogicNoteMixin", "NetworkManagerMixin", "PacketMixin", "SaveHandlerBaseMixin"
     ],
     "server": [
       "PacketHandlerLoginMixin"

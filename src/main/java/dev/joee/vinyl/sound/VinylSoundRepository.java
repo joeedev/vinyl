@@ -39,7 +39,12 @@ public class VinylSoundRepository extends NamedSoundRepository {
 
 	public SoundEntry getSoundEntry(String filePath) {
 		SoundEvent event = new VinylSoundEvent(this, filePath, filePath);
-		return new VinylSoundEntry(event, filePath);
+		return new VinylSoundEntry(event, filePath, true);
+	}
+
+	public SoundEntry getSoundEntryForNoteBlock(String filePath) {
+		SoundEvent event = new VinylSoundEvent(this, filePath, filePath);
+		return new VinylSoundEntry(event, filePath, false);
 	}
 
 	private static class VinylSoundEvent extends SoundEvent {
@@ -49,7 +54,7 @@ public class VinylSoundRepository extends NamedSoundRepository {
 	}
 
 	private static class VinylSoundEntry extends SoundEntry {
-		public VinylSoundEntry(@NotNull SoundEvent parentEvent, @NotNull String name) {
+		public VinylSoundEntry(@NotNull SoundEvent parentEvent, @NotNull String name, boolean shouldStream) {
 			super(
 				parentEvent,
 				Minecraft.getMinecraft().texturePackList.getDefaultTexturePack(),
@@ -58,7 +63,7 @@ public class VinylSoundRepository extends NamedSoundRepository {
 				1,
 				1,
 				64,
-				true,
+				shouldStream,
 				Type.FILE
 			);
 		}

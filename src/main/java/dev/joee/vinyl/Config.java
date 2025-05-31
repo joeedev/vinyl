@@ -13,7 +13,8 @@ public class Config {
 
 		defaultConfig
 			.addCategory("BlockIDs")
-			.addEntry("vinylPressId", startingBlockId++);
+			.addEntry("vinylPressId", startingBlockId++)
+			.addEntry("vinylPressActiveId", startingBlockId++);
 
 		int startingItemId = 21234;
 

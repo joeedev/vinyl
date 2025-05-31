@@ -1,13 +1,16 @@
 package dev.joee.vinyl;
 
 import dev.joee.vinyl.block.BlockLogicVinylPress;
+import dev.joee.vinyl.block.BlockLogicVinylPressActive;
 import dev.joee.vinyl.item.ItemBlankRecord;
 import dev.joee.vinyl.item.ItemCustomRecord;
 import dev.joee.vinyl.network.*;
 import dev.joee.vinyl.sound.VinylSoundRepository;
+import dev.joee.vinyl.tileentity.TileEntityVinylJukebox;
 import dev.joee.vinyl.tileentity.TileEntityVinylPress;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.block.Block;
+import net.minecraft.core.block.tag.BlockTags;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.tag.ItemTags;
 import net.minecraft.core.net.packet.Packet;
@@ -30,6 +33,8 @@ public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypo
 	public static VinylSoundRepository SOUNDS;
 
 	public static Block<BlockLogicVinylPress> vinylPress;
+	public static Block<BlockLogicVinylPressActive> vinylPressActive;
+
 	public static Item blankRecord;
 	public static Item customRecord;
 
@@ -73,6 +78,15 @@ public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypo
 				BlockLogicVinylPress::new
 			);
 
+		vinylPressActive = new BlockBuilder(MOD_ID)
+			.setTileEntity(TileEntityVinylPress::new)
+			.setLuminance(15)
+			.setTags(BlockTags.NOT_IN_CREATIVE_MENU)
+			.build(
+				"vinylPressActive", CONFIG.getBlockId("vinylPressActiveId"),
+				BlockLogicVinylPressActive::new
+			);
+
 		blankRecord = new ItemBuilder(MOD_ID)
 			.setStackSize(1)
 			.build(new ItemBlankRecord());
@@ -92,6 +106,11 @@ public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypo
 		EntityHelper.createTileEntity(
 			TileEntityVinylPress.class,
 			NamespaceID.getPermanent(MOD_ID, "vinylPress")
+		);
+
+		EntityHelper.createTileEntity(
+			TileEntityVinylJukebox.class,
+			NamespaceID.getPermanent(MOD_ID, "vinylJukebox")
 		);
 	}
 }

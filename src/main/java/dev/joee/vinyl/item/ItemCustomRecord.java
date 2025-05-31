@@ -3,9 +3,12 @@ package dev.joee.vinyl.item;
 import com.mojang.nbt.tags.CompoundTag;
 import dev.joee.vinyl.Vinyl;
 import dev.joee.vinyl.network.NetworkMessagePlayMusic;
+import dev.joee.vinyl.tileentity.TileEntityVinylJukebox;
 import net.minecraft.core.block.BlockLogicJukebox;
 import net.minecraft.core.block.Blocks;
+import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.entity.TileEntityActivator;
+import net.minecraft.core.block.entity.TileEntityJukebox;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
@@ -29,16 +32,8 @@ public class ItemCustomRecord extends Item {
 	public boolean onUseItemOnBlock(ItemStack stack, Player player, World world, int x, int y, int z, Side side, double xPlaced, double yPlaced) {
 		if (world.getBlockId(x, y, z) == Blocks.JUKEBOX.id() && world.getBlockMetadata(x, y, z) == 0) {
 			if (!world.isClientSide) {
-				CompoundTag tag = stack.getData();
-				NetworkHandler.sendToAllAround(
-					x, y, z, 64, world.dimension.id,
-					new NetworkMessagePlayMusic(
-						tag.getString("RecordName"),
-						tag.getString("RecordArtist"),
-						tag.getString("RecordFilePath"),
-						x, y, z
-					)
-				);
+				this.playMusic(stack, world, x, y, z);
+				this.storeRecordInJukebox(stack, world, x, y, z);
 				stack.consumeItem(player);
 			}
 
@@ -55,19 +50,41 @@ public class ItemCustomRecord extends Item {
 		int z = blockZ + direction.getOffsetZ();
 		int b = world.getBlockId(x, y, z);
 		if (b == Blocks.JUKEBOX.id() && world.getBlockMetadata(x, y, z) == 0) {
-			CompoundTag tag = stack.getData();
-			NetworkHandler.sendToAllAround(
-				x, y, z, 64, world.dimension.id,
-				new NetworkMessagePlayMusic(
-					tag.getString("RecordName"),
-					tag.getString("RecordArtist"),
-					tag.getString("RecordFilePath"),
-					x, y, z
-				)
-			);
+			this.playMusic(stack, world, x, y, z);
+			this.storeRecordInJukebox(stack, world, x, y, z);
 			stack.consumeItem(null);
 		}
 
+	}
+
+	private void playMusic(ItemStack stack, World world, int x, int y, int z) {
+		CompoundTag tag = stack.getData();
+		NetworkHandler.sendToAllAround(
+			x, y, z, 64, world.dimension.id,
+			new NetworkMessagePlayMusic(
+				tag.getString("RecordName"),
+				tag.getString("RecordArtist"),
+				tag.getString("RecordFilePath"),
+				x, y, z
+			)
+		);
+	}
+
+	private void storeRecordInJukebox(ItemStack stack, World world, int x, int y, int z) {
+		TileEntity tileEntity = world.getTileEntity(x, y, z);
+
+		if (tileEntity instanceof TileEntityJukebox) {
+			tileEntity = new TileEntityVinylJukebox((TileEntityJukebox) tileEntity);
+			world.setTileEntity(x, y, z, tileEntity);
+		}
+
+		if (tileEntity instanceof TileEntityVinylJukebox) {
+			TileEntityVinylJukebox te = (TileEntityVinylJukebox) tileEntity;
+			te.record = stack.getItem().id;
+			te.recordTag = stack.getData();
+			te.setChanged();
+			world.setBlockMetadataWithNotify(x, y, z, 1);
+		}
 	}
 
 	@Override
