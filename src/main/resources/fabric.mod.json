@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "id": "examplemod",
+  "id": "vinyl",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This mod aims to help new BTA modders.",
+  "name": "Vinyl",
+  "description": "Custom music discs for Better than Adventure! ",
   "authors": [
-    "Turnip Labs"
+    "joee.dev"
   ],
   "contact": {
-    "homepage": "",
+    "homepage": "https://github.com/joeedev/vinyl",
     "sources": ""
   },
 
@@ -19,20 +19,20 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-			"turniplabs.examplemod.ExampleMod"
+			"dev.joee.vinyl.Vinyl"
     ],
 		"beforeGameStart": [
-			"turniplabs.examplemod.ExampleMod"
+			"dev.joee.vinyl.Vinyl"
 		],
 		"afterGameStart": [
-			"turniplabs.examplemod.ExampleMod"
+			"dev.joee.vinyl.Vinyl"
 		],
 		"recipesReady": [
-			"turniplabs.examplemod.ExampleMod"
+			"dev.joee.vinyl.Vinyl"
 		]
 	},
   "mixins": [
-      "examplemod.mixins.json"
+		"vinyl.mixins.json"
   ],
 
   "depends": {

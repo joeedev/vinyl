@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "dev.joee.vinyl.mixin",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": [
+      "NetworkManagerMixin", "PacketMixin", "SaveHandlerBaseMixin"
+    ],
+    "server": [
+      "PacketHandlerLoginMixin"
+    ],
+    "injectors": {
+      "defaultRequire": 1
+    }
+}

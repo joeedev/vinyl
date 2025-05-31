@@ -1,0 +1,9 @@
+gui.downloading_music.label.title=Downloading Vinyl music...
+
+tile.vinyl.recordpress.name=Record Press
+tile.vinyl.recordpress.desc=Right click with a blank disc to press it!
+
+item.vinyl.record.blank.name=Blank Music Disc
+item.vinyl.record.blank.desc=A music disc with no music.
+item.vinyl.record.custom.name=Music Disc
+item.vinyl.record.custom.desc=
