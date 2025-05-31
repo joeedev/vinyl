@@ -34,6 +34,8 @@ public class ItemBlankRecord extends Item {
 		tag.putString("RecordName", "");
 		tag.putString("RecordArtist", "");
 		tag.putString("RecordUrl", "");
+		tag.putInt("PrimaryColor", 0);
+		tag.putInt("SecondaryColor", 0);
 		return tag;
 	}
 
@@ -84,6 +86,8 @@ public class ItemBlankRecord extends Item {
 			newData.putString("RecordName", oldData.getString("RecordName"));
 			newData.putString("RecordArtist", oldData.getString("RecordArtist"));
 			newData.putString("RecordFilePath", filePath);
+			newData.putInt("PrimaryColor", oldData.getInteger("PrimaryColor"));
+			newData.putInt("SecondaryColor", oldData.getInteger("SecondaryColor"));
 
 			TileEntityVinylPress.shouldDropContents = false;
 

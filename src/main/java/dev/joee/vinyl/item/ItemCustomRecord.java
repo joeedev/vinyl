@@ -4,7 +4,6 @@ import com.mojang.nbt.tags.CompoundTag;
 import dev.joee.vinyl.Vinyl;
 import dev.joee.vinyl.network.NetworkMessagePlayMusic;
 import dev.joee.vinyl.tileentity.TileEntityVinylJukebox;
-import net.minecraft.core.block.BlockLogicJukebox;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.entity.TileEntityActivator;
@@ -12,6 +11,7 @@ import net.minecraft.core.block.entity.TileEntityJukebox;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
+import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
@@ -26,6 +26,29 @@ public class ItemCustomRecord extends Item {
 			String.format("%s:item/%s", Vinyl.MOD_ID, "record.custom"),
 			Vinyl.CONFIG.getItemId("customRecordId")
 		);
+	}
+
+	@Override
+	public CompoundTag getDefaultTag() {
+		CompoundTag tag = super.getDefaultTag();
+		tag.putString("RecordName", "");
+		tag.putString("RecordArtist", "");
+		tag.putString("RecordFilePath", "");
+		tag.putInt("PrimaryColor", 0);
+		tag.putInt("SecondaryColor", 0);
+		return tag;
+	}
+
+	@Override
+	public String getTranslatedDescription(ItemStack stack) {
+		CompoundTag tag = stack.getData();
+
+		TextFormatting primary = TextFormatting.get(15 - tag.getInteger("PrimaryColor"));
+		TextFormatting secondary = TextFormatting.get(15 - tag.getInteger("SecondaryColor"));
+
+		return primary + stack.getData().getString("RecordArtist") +
+			TextFormatting.LIGHT_GRAY + " - " +
+			secondary + stack.getData().getString("RecordName");
 	}
 
 	@Override
@@ -85,20 +108,5 @@ public class ItemCustomRecord extends Item {
 			te.setChanged();
 			world.setBlockMetadataWithNotify(x, y, z, 1);
 		}
-	}
-
-	@Override
-	public CompoundTag getDefaultTag() {
-		CompoundTag tag = super.getDefaultTag();
-		tag.putString("RecordName", "");
-		tag.putString("RecordArtist", "");
-		tag.putString("RecordFilePath", "");
-		return tag;
-	}
-
-	@Override
-	public String getTranslatedDescription(ItemStack stack) {
-		CompoundTag tag = stack.getData();
-		return String.format("%s - %s", tag.getString("RecordArtist"), tag.getString("RecordName"));
 	}
 }
