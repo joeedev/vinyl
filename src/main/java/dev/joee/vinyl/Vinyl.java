@@ -1,23 +1,26 @@
 package dev.joee.vinyl;
 
+import dev.joee.vinyl.block.BlockLogicVinylPress;
+import dev.joee.vinyl.item.ItemBlankRecord;
+import dev.joee.vinyl.item.ItemCustomRecord;
 import dev.joee.vinyl.network.*;
 import dev.joee.vinyl.sound.VinylSoundRepository;
+import dev.joee.vinyl.tileentity.TileEntityVinylPress;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.core.block.BlockLogic;
-import net.minecraft.core.block.material.Material;
-import net.minecraft.core.entity.player.Player;
+import net.minecraft.core.block.Block;
+import net.minecraft.core.item.Item;
+import net.minecraft.core.item.tag.ItemTags;
 import net.minecraft.core.net.packet.Packet;
-import net.minecraft.core.util.helper.Side;
-import net.minecraft.core.world.World;
+import net.minecraft.core.util.collection.NamespaceID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import turniplabs.halplibe.helper.BlockBuilder;
+import turniplabs.halplibe.helper.EntityHelper;
 import turniplabs.halplibe.helper.EnvironmentHelper;
+import turniplabs.halplibe.helper.ItemBuilder;
 import turniplabs.halplibe.helper.network.NetworkHandler;
 import turniplabs.halplibe.util.GameStartEntrypoint;
 import turniplabs.halplibe.util.RecipeEntrypoint;
-
-import java.io.IOException;
 
 public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypoint {
     public static final String MOD_ID = "vinyl";
@@ -25,6 +28,10 @@ public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypo
 	public static final Config CONFIG = new Config();
 
 	public static VinylSoundRepository SOUNDS;
+
+	public static Block<BlockLogicVinylPress> vinylPress;
+	public static Item blankRecord;
+	public static Item customRecord;
 
     @Override
     public void onInitialize() {
@@ -43,6 +50,7 @@ public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypo
 			false, true, PacketAudioReceived.class
 		);
 
+		NetworkHandler.registerNetworkMessage(NetworkMessageModifyRecord::new);
 		NetworkHandler.registerNetworkMessage(NetworkMessagePlayMusic::new);
     }
 
@@ -58,29 +66,21 @@ public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypo
 
 	@Override
 	public void beforeGameStart() {
-		new BlockBuilder(MOD_ID)
+		vinylPress = new BlockBuilder(MOD_ID)
+			.setTileEntity(TileEntityVinylPress::new)
 			.build(
-				"test", CONFIG.getBlockId("testId"),
-				b -> new BlockLogic(b, Material.stone) {
-					@Override
-					public boolean onBlockRightClicked(World world, int x, int y, int z, Player player, Side side, double xHit, double yHit) {
-						super.onBlockRightClicked(world, x, y, z, player, side, xHit, yHit);
-
-						if (!world.isClientSide) {
-							try {
-								ServerFileManager.instance.sendAudioFile(
-									player,
-									"music/example.ogg"
-								);
-							} catch (IOException e) {
-								throw new RuntimeException(e);
-							}
-						}
-
-						return true;
-					}
-				}
+				"vinylPress", CONFIG.getBlockId("vinylPressId"),
+				BlockLogicVinylPress::new
 			);
+
+		blankRecord = new ItemBuilder(MOD_ID)
+			.setStackSize(1)
+			.build(new ItemBlankRecord());
+
+		customRecord = new ItemBuilder(MOD_ID)
+			.setStackSize(1)
+			.setTags(ItemTags.NOT_IN_CREATIVE_MENU)
+			.build(new ItemCustomRecord());
 	}
 
 	@Override
@@ -88,5 +88,10 @@ public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypo
 		if (!EnvironmentHelper.isServerEnvironment()) {
 			SOUNDS = new VinylSoundRepository();
 		}
+
+		EntityHelper.createTileEntity(
+			TileEntityVinylPress.class,
+			NamespaceID.getPermanent(MOD_ID, "vinylPress")
+		);
 	}
 }

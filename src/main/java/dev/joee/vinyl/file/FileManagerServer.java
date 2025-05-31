@@ -1,6 +1,8 @@
-package dev.joee.vinyl.network;
+package dev.joee.vinyl.file;
 
 import dev.joee.vinyl.mixin.SaveHandlerBaseMixin;
+import dev.joee.vinyl.network.PacketAudioChunk;
+import dev.joee.vinyl.network.PacketAudioReceived;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.entity.player.Player;
@@ -15,13 +17,15 @@ import net.minecraft.server.net.handler.PacketHandlerServer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 @Environment(EnvType.SERVER)
-public class ServerFileManager extends FileManagerBase {
-	public static final ServerFileManager instance = new ServerFileManager();
+public class FileManagerServer extends FileManagerBase {
+	public static final FileManagerServer instance = new FileManagerServer();
 
 	private int globalFileId = 0;
 
@@ -35,26 +39,30 @@ public class ServerFileManager extends FileManagerBase {
 		return new File(saveDir, "vinyl/sounds");
 	}
 
+	public File getWorldAudioDir() {
+		return this.getAudioDir();
+	}
+
 	public File getAudioFile(String filePath) {
 		return new File(this.getAudioDir(), filePath);
 	}
 
-	public CompletableFuture<Boolean> sendAudioFile(Player player, String filePath) throws IOException {
+	public CompletableFuture<?> sendAudioFile(Player player, String filePath) throws IOException {
 		File file = this.getAudioFile(filePath);
 		return this.sendAudioFile(((PlayerServer) player).playerNetServerHandler, file, filePath);
 	}
 
-	public CompletableFuture<Boolean> sendAudioFile(PacketHandler packetHandler, String filePath) throws IOException {
+	public CompletableFuture<?> sendAudioFile(PacketHandler packetHandler, String filePath) throws IOException {
 		File file = this.getAudioFile(filePath);
 		return this.sendAudioFile(packetHandler, file, filePath);
 	}
 
-	public CompletableFuture<Boolean> sendAudioFile(PacketHandler packetHandler, File file, String filePath) throws IOException {
+	public CompletableFuture<?> sendAudioFile(PacketHandler packetHandler, File file, String filePath) throws IOException {
 		byte[] data = Files.readAllBytes(file.toPath());
 		return this.sendAudioFile(packetHandler, data, filePath);
 	}
 
-	public CompletableFuture<Boolean> sendAudioFile(PacketHandler packetHandler, byte[] data, String filePath) {
+	public CompletableFuture<?> sendAudioFile(PacketHandler packetHandler, byte[] data, String filePath) {
 		int fileId = this.getFileId();
 		int size = data.length;
 		int chunkSize = PacketAudioChunk.CHUNK_SIZE;
@@ -103,5 +111,25 @@ public class ServerFileManager extends FileManagerBase {
 		} else {
 			assert false;
 		}
+	}
+
+	public CompletableFuture<String> downloadAudioFromYouTubeAndSend(String url) {
+		return this.downloadAudioFromYouTube(url)
+			.thenCompose(filePath -> {
+				List<CompletableFuture<?>> futures = new ArrayList<>();
+
+				for (PlayerServer player : MinecraftServer.getInstance().playerList.playerEntities) {
+					try {
+						futures.add(
+							FileManagerServer.instance.sendAudioFile(player, filePath)
+						);
+					} catch (IOException ignored) {
+
+					}
+				}
+
+				return CompletableFuture.allOf(futures.toArray(new CompletableFuture<?>[] {}))
+					.thenApply((ignored) -> filePath);
+			});
 	}
 }

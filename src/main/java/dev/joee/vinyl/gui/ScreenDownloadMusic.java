@@ -29,10 +29,12 @@ public class ScreenDownloadMusic extends Screen {
 		this.filesDownloaded++;
 	}
 
+	@Override
 	public void keyPressed(char c, int i, int mouseX, int mouseY) {
 
 	}
 
+	@Override
 	public void init() {
 		I18n i18n = I18n.getInstance();
 		this.buttons.clear();
@@ -43,6 +45,7 @@ public class ScreenDownloadMusic extends Screen {
 		);
 	}
 
+	@Override
 	public void tick() {
 		++this.updateCounter;
 		if (this.updateCounter % 20 == 0) {
@@ -55,6 +58,7 @@ public class ScreenDownloadMusic extends Screen {
 
 	}
 
+	@Override
 	protected void buttonClicked(ButtonElement button) {
 		if (button.id == 0) {
 			if (this.packetHandler != null) {
@@ -65,6 +69,7 @@ public class ScreenDownloadMusic extends Screen {
 		}
 	}
 
+	@Override
 	public void render(int mouseX, int mouseY, float partialTick) {
 		this.renderTexturedBackground();
 		I18n i18n = I18n.getInstance();

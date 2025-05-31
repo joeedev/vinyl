@@ -2,7 +2,7 @@ package dev.joee.vinyl.mixin;
 
 import dev.joee.vinyl.network.IVinylPacketHandlerLogin;
 import dev.joee.vinyl.network.PacketFileList;
-import dev.joee.vinyl.network.ServerFileManager;
+import dev.joee.vinyl.file.FileManagerServer;
 import net.minecraft.core.net.NetworkManager;
 import net.minecraft.core.net.packet.PacketLogin;
 import net.minecraft.server.net.handler.PacketHandlerLogin;
@@ -37,7 +37,7 @@ public class PacketHandlerLoginMixin implements IVinylPacketHandlerLogin {
 		if (!this.hasReceivedAudio) {
 			this.vinylLoginPacket = loginPacket;
 			this.netManager.addToSendQueue(
-				new PacketFileList(ServerFileManager.instance.getAudioFilePaths())
+				new PacketFileList(FileManagerServer.instance.getAudioFilePaths())
 			);
 			ci.cancel();
 		}

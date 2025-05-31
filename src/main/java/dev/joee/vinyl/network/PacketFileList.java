@@ -1,6 +1,8 @@
 package dev.joee.vinyl.network;
 
 import dev.joee.vinyl.Vinyl;
+import dev.joee.vinyl.file.FileManagerClient;
+import dev.joee.vinyl.file.FileManagerServer;
 import dev.joee.vinyl.gui.ScreenDownloadMusic;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -52,11 +54,13 @@ public class PacketFileList extends Packet {
 		if (EnvironmentHelper.isServerEnvironment() && packetHandler instanceof PacketHandlerLogin) {
 			// Send the client the files they asked for
 
-			List<CompletableFuture<Boolean>> futures = new ArrayList<>();
+			List<CompletableFuture<?>> futures = new ArrayList<>();
 
 			for (String filePath : this.filePaths) {
 				try {
-					futures.add(ServerFileManager.instance.sendAudioFile(packetHandler, filePath));
+					futures.add(
+						FileManagerServer.instance.sendAudioFile(packetHandler, filePath)
+					);
 				} catch (IOException e) {
 					((PacketHandlerLogin) packetHandler).kickUser(
 						"An error occurred while downloading Vinyl music."
@@ -78,7 +82,7 @@ public class PacketFileList extends Packet {
 		} else if (!EnvironmentHelper.isServerEnvironment() && packetHandler instanceof PacketHandlerClient) {
 			// Send the server what files we need
 
-			String[] clientFilePaths = ClientFileManager.instance.getAudioFilePaths();
+			String[] clientFilePaths = FileManagerClient.instance.getAudioFilePaths();
 			String[] filePathsNeeded = Arrays.stream(this.filePaths).filter(
 				f -> !Arrays.asList(clientFilePaths).contains(f)
 			).toArray(String[]::new);

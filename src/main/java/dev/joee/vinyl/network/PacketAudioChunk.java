@@ -1,5 +1,6 @@
 package dev.joee.vinyl.network;
 
+import dev.joee.vinyl.file.FileManagerClient;
 import net.minecraft.client.net.handler.PacketHandlerClient;
 import net.minecraft.core.net.handler.PacketHandler;
 import net.minecraft.core.net.packet.Packet;
@@ -75,7 +76,7 @@ public class PacketAudioChunk extends Packet {
 	@Override
 	public void handlePacket(PacketHandler packetHandler) {
 		if (!EnvironmentHelper.isServerEnvironment()) {
-			ClientFileManager.instance.handleChunk(
+			FileManagerClient.instance.handleChunk(
 				this,
 				(PacketHandlerClient) packetHandler
 			);

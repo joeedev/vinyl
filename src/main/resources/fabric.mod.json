@@ -29,6 +29,9 @@
 		],
 		"recipesReady": [
 			"dev.joee.vinyl.Vinyl"
+		],
+		"initModels": [
+			"dev.joee.vinyl.InitModels"
 		]
 	},
   "mixins": [

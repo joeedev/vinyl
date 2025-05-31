@@ -1,6 +1,5 @@
 package dev.joee.vinyl.sound;
 
-import dev.joee.vinyl.Vinyl;
 import dev.joee.vinyl.mixin.SaveHandlerBaseMixin;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -74,7 +73,7 @@ public class VinylSoundRepository extends NamedSoundRepository {
 
 			SaveHandlerBaseMixin saveHandler = (SaveHandlerBaseMixin) mc.currentWorld.getSaveHandler();
 			File file = new File(
-				new File(saveHandler.invokeGetSaveDirectory(), "/vinyl/sounds/"),
+				new File(saveHandler.invokeGetSaveDirectory(), "vinyl/sounds/"),
 				this.name
 			);
 

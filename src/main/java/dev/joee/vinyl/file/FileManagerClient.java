@@ -1,7 +1,10 @@
-package dev.joee.vinyl.network;
+package dev.joee.vinyl.file;
 
 import dev.joee.vinyl.Vinyl;
 import dev.joee.vinyl.gui.ScreenDownloadMusic;
+import dev.joee.vinyl.mixin.SaveHandlerBaseMixin;
+import dev.joee.vinyl.network.PacketAudioChunk;
+import dev.joee.vinyl.network.PacketAudioReceived;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -15,13 +18,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Environment(EnvType.CLIENT)
-public class ClientFileManager extends FileManagerBase {
-	public static final ClientFileManager instance = new ClientFileManager();
+public class FileManagerClient extends FileManagerBase {
+	public static final FileManagerClient instance = new FileManagerClient();
 
 	private final Map<Integer, byte[]> fileBytes = new HashMap<>();
 
 	public File getAudioDir() {
 		return Vinyl.SOUNDS.rootFile;
+	}
+
+	@Override
+	public File getWorldAudioDir() {
+		Minecraft mc = Minecraft.getMinecraft();
+		SaveHandlerBaseMixin saveHandler = (SaveHandlerBaseMixin) mc.currentWorld.getSaveHandler();
+		return new File(saveHandler.invokeGetSaveDirectory(), "vinyl/sounds/");
 	}
 
 	public synchronized void handleChunk(PacketAudioChunk chunk, PacketHandlerClient packetHandler) {

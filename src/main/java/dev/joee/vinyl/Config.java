@@ -13,7 +13,14 @@ public class Config {
 
 		defaultConfig
 			.addCategory("BlockIDs")
-			.addEntry("testId", startingBlockId++);
+			.addEntry("vinylPressId", startingBlockId++);
+
+		int startingItemId = 21234;
+
+		defaultConfig
+			.addCategory("ItemIDs")
+			.addEntry("blankRecordId", startingItemId++)
+			.addEntry("customRecordId", startingItemId++);
 
 		int startingPacketId = 123;
 
@@ -28,6 +35,10 @@ public class Config {
 
 	public int getBlockId(String key) {
 		return this.handler.getInt(String.format("BlockIDs.%s", key));
+	}
+
+	public int getItemId(String key) {
+		return this.handler.getInt(String.format("ItemIDs.%s", key));
 	}
 
 	public int getPacketId(String key) {
