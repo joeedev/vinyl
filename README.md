@@ -11,14 +11,19 @@ Custom music discs for Better than Adventure!
 
 ## How to use
 1. Put any music disc in a Blast Furnace to get a blank disc.
+   
    ![Blast Furnace before](screenshots/1.png)
    ![Blast furnace after](screenshots/2.png)
 2. Right click with the disc in hand to set the name, artist, and URL to download from.
+   
    ![Disc GUI](screenshots/3.png)
 3. Add dye to colour the disc! (only one pattern supported at the moment, but I may add more)
+   
    ![Dye Recipe](screenshots/4.png)
 4. Right click a Vinyl Press whilst holding the disc. When it's done pressing, right click again to take it out.
+   
    ![Vinyl Press](screenshots/5.png)
 5. Enjoy your new custom music disc in a Jukebox! You can also use it as a Note Block sound by putting the disc in a chest
    underneath the Note Block!
+   
    ![Partay!](screenshots/6.png)
