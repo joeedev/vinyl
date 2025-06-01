@@ -61,6 +61,7 @@ public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypo
 
 		NetworkHandler.registerNetworkMessage(NetworkMessageModifyRecord::new);
 		NetworkHandler.registerNetworkMessage(NetworkMessagePlayMusic::new);
+		NetworkHandler.registerNetworkMessage(NetworkMessagePlayNote::new);
     }
 
 	@Override
@@ -147,5 +148,7 @@ public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypo
 		if (!EnvironmentHelper.isServerEnvironment()) {
 			SOUNDS = new VinylSoundRepository();
 		}
+
+		CreativeHelper.setParent(blankRecord, Items.RECORD_DOG);
 	}
 }

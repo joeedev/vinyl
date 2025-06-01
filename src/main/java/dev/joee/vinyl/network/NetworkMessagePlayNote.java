@@ -15,6 +15,7 @@ public class NetworkMessagePlayNote implements NetworkMessage {
 	public int y;
 	public int z;
 
+	@SuppressWarnings("unused")
 	public NetworkMessagePlayNote() {
 
 	}

@@ -43,7 +43,7 @@ public class FileManagerClient extends FileManagerBase {
 			this.fileBytes.put(chunk.fileId, chunk.data);
 		}
 
-		if (chunk.isFinalChunk()) {
+		if (chunk.isFinalChunk() && chunk.filePath.endsWith(".ogg")) {
 			byte[] currentData = this.fileBytes.get(chunk.fileId);
 			byte[] trimmedData = Arrays.copyOfRange(currentData, 0, chunk.size);
 

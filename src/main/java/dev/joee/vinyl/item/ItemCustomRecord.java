@@ -18,8 +18,12 @@ import net.minecraft.core.world.World;
 import turniplabs.halplibe.helper.network.NetworkHandler;
 
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ItemCustomRecord extends Item {
+	private static final Pattern FORMAT_PATTERN = Pattern.compile("§[0-9a-fk-or]|§<.*?>");
+
 	public ItemCustomRecord() {
 		super(
 			"record.custom",
@@ -46,9 +50,11 @@ public class ItemCustomRecord extends Item {
 		TextFormatting primary = TextFormatting.get(15 - tag.getInteger("PrimaryColor"));
 		TextFormatting secondary = TextFormatting.get(15 - tag.getInteger("SecondaryColor"));
 
-		return primary + stack.getData().getString("RecordArtist") +
+		String text = primary + stack.getData().getString("RecordArtist") +
 			TextFormatting.LIGHT_GRAY + " - " +
 			secondary + stack.getData().getString("RecordName");
+
+		return propagateFormattingToWords(text);
 	}
 
 	@Override
@@ -108,5 +114,65 @@ public class ItemCustomRecord extends Item {
 			te.setChanged();
 			world.setBlockMetadataWithNotify(x, y, z, 1);
 		}
+	}
+
+	private static String propagateFormattingToWords(String input) {
+		StringBuilder output = new StringBuilder();
+		StringBuilder activeFormats = new StringBuilder();
+		StringBuilder wordBuffer = new StringBuilder();
+
+		Matcher formatMatcher = FORMAT_PATTERN.matcher(input);
+
+		int i = 0;
+
+		while (i < input.length()) {
+			if (formatMatcher.find(i) && formatMatcher.start() == i) {
+				String formatCode = formatMatcher.group();
+				wordBuffer.append(formatCode);
+				i += formatCode.length();
+
+				// Handle formatting state
+				if (formatCode.equals("§r")) {
+					activeFormats.setLength(0); // Reset
+				} else {
+					// Remove conflicting formats
+					if (formatCode.matches("§[0-9a-fr]")) {
+						removeColorAndReset(activeFormats);
+					}
+					activeFormats.append(formatCode);
+				}
+			} else {
+				char c = input.charAt(i);
+				if (Character.isWhitespace(c)) {
+					if (wordBuffer.length() > 0) {
+						output.append(activeFormats).append(wordBuffer);
+						wordBuffer.setLength(0);
+					}
+					output.append(c); // preserve spacing
+				} else {
+					wordBuffer.append(c);
+				}
+				i++;
+			}
+		}
+
+		if (wordBuffer.length() > 0) {
+			output.append(activeFormats).append(wordBuffer);
+		}
+
+		return output.toString();
+	}
+
+	private static void removeColorAndReset(StringBuilder formats) {
+		Matcher m = FORMAT_PATTERN.matcher(formats.toString());
+		StringBuilder newFormats = new StringBuilder();
+		while (m.find()) {
+			String f = m.group();
+			if (!f.matches("§[0-9a-fr]")) {
+				newFormats.append(f);
+			}
+		}
+		formats.setLength(0);
+		formats.append(newFormats);
 	}
 }

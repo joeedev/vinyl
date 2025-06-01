@@ -1,6 +1,5 @@
 package dev.joee.vinyl.mixin;
 
-import dev.joee.vinyl.Vinyl;
 import dev.joee.vinyl.network.IVinylPacket;
 import net.minecraft.core.net.NetworkManager;
 import net.minecraft.core.net.packet.Packet;
@@ -28,8 +27,6 @@ public abstract class NetworkManagerMixin {
 	@Final
 	@Shadow
 	private Object writeLock;
-	@Shadow
-	private int estimatedRemaining;
 	@Shadow
 	private DataOutputStream dos;
 	@Shadow

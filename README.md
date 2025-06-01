@@ -1,37 +1,24 @@
-# Example Mod
+# Vinyl
 
-Template for making Babric mods for BTA!
+Custom music discs for Better than Adventure!
 
-**Note: *DO NOT fork this repository unless you want to contribute!***
+## IMPORTANT NOTES
+- This mod uses [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) to download audio!
+  - If you're on singleplayer, **you must have `yt-dlp` installed to use Vinyl.**
+  - If you're running a server with Vinyl, **you must have `yt-dlp` installed on the server**, but it is **not** required for connecting clients.
+- When used on a server, **Vinyl will send audio files from server to client**.
+  - If you trust the server host this should be completely fine. If not, this is something you should at least be aware of before you use Vinyl.
 
-## Prerequisites
-- JDK for Java 17 ([Eclipse Temurin](https://adoptium.net/temurin/releases/) recommended)
-- [Intellij IDEA](https://www.jetbrains.com/idea/download/) (Scroll down for the free community edition, if using linux **DO NOT** use the flatpak distribution)
-- Minecraft Development plugin (Optional, but highly recommended)
-
-## Setup instructions
-   
-
-1. Click the `Use this template` button on this repo's page above (Will only appear if logged in). Choose `Create a new repository`, you will be redirected to a new page. Enter your repo's name and description, and hit `Create repository`.  
-   To get your project, open IntelliJ IDEA and click `Get from VCS`. Select `Repository URL` and enter your repo's url
-
-2. After the project has finished importing, close it and open it again.  
-   If that does not work, open the right sidebar with `Gradle` on it, open `Tasks` > `fabric` and run `ideaSyncTask`.
-
-3. Create a new run configuration by going in `Run > Edit Configurations`.  
-   Then click on the plus icon and select Gradle. In the `Tasks and Arguments` field enter `build`.  
-   Running it will build your finished jar files and put them in `build/libs/`.
-
-4. Lastly, open `File` > `Settings` and head to `Build, Execution, Development` > `Build Tools` > `Gradle`.  
-   Make sure `Build and run using` and `Run tests using` is set to `Gradle`.
-
-5. Done! Now, all that's left is to change every mention of `examplemod` and `turniplabs` to your own mod id and mod group, respectively. Happy modding!
-
-## Tips
-
-1. If you haven't already you should join the BTA modding discord! https://discord.gg/FTUNJhswBT
-2. You can set your username when launching the client run configuration by setting `--username <username>` in your program arguments.
-3. When launching the server run configuration you may want to remove the `nogui` program argument in order to see the regular server GUI.
-4. In Intellij you can double press shift or press ctrl+N to search class files, change the search from the default `Project Files` to `All Places` you can easily explore the classes for you dependencies and even BTA itself.
-5. In Intellij if ctrl+left click on a field or method you can quickly get information on when and where that field or method is assign or used.
-
+## How to use
+1. Put any music disc in a Blast Furnace to get a blank disc.
+   ![Blast Furnace before](screenshots/1.png)
+   ![Blast furnace after](screenshots/2.png)
+2. Right click with the disc in hand to set the name, artist, and URL to download from.
+   ![Disc GUI](screenshots/3.png)
+3. Add dye to colour the disc! (only one pattern supported at the moment, but I may add more)
+   ![Dye Recipe](screenshots/4.png)
+4. Right click a Vinyl Press whilst holding the disc. When it's done pressing, right click again to take it out.
+   ![Vinyl Press](screenshots/5.png)
+5. Enjoy your new custom music disc in a Jukebox! You can also use it as a Note Block sound by putting the disc in a chest
+   underneath the Note Block!
+   ![Partay!](screenshots/6.png)

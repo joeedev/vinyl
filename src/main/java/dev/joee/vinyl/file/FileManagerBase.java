@@ -17,28 +17,38 @@ public abstract class FileManagerBase {
 			"music"
 		);
 
+		//noinspection ResultOfMethodCallIgnored
+		musicDir.mkdirs();
+
 		return Arrays.stream(Objects.requireNonNull(musicDir.listFiles()))
 			.map(f -> String.format("music/%s", f.getName()))
 			.toArray(String[]::new);
 	}
 
-	public CompletableFuture<String> downloadAudioFromYouTube(String url) {
+	public CompletableFuture<String> downloadAudioFromYtdlp(String url) {
 		Vinyl.LOGGER.info("Downloading from {}", url);
 
 		UUID uuid = UUID.randomUUID();
 		String filePath = String.format("music/%s.ogg", uuid);
-		File audioFile = new File(
+		File musicDir = new File(
 			this.getWorldAudioDir(),
-			filePath
+			"music"
 		);
 
-		Process process = null;
+		//noinspection ResultOfMethodCallIgnored
+		musicDir.mkdirs();
+
+		File audioFile = new File(musicDir, String.format("%s.ogg", uuid));
+
+		Process process;
 		try {
-			process = Runtime.getRuntime().exec(new String[] {
-				"yt-dlp", "-xf", "worst", "--audio-format", "vorbis", "-o",
-				audioFile.getAbsolutePath().replace(".ogg", ""),
-				url
-			});
+			process = new ProcessBuilder()
+				.command(
+					"yt-dlp", "-xf", "worst", "--audio-format", "vorbis", "-o",
+					audioFile.getAbsolutePath().replace(".ogg", ""),
+					url
+				)
+				.start();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

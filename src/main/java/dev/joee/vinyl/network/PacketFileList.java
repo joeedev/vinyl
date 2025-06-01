@@ -1,6 +1,5 @@
 package dev.joee.vinyl.network;
 
-import dev.joee.vinyl.Vinyl;
 import dev.joee.vinyl.file.FileManagerClient;
 import dev.joee.vinyl.file.FileManagerServer;
 import dev.joee.vinyl.gui.ScreenDownloadMusic;
@@ -24,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 public class PacketFileList extends Packet {
 	public String[] filePaths;
 
+	@SuppressWarnings("unused")
 	public PacketFileList() {
 
 	}
@@ -90,8 +90,6 @@ public class PacketFileList extends Packet {
 			((PacketHandlerClient) packetHandler).addToSendQueue(
 				new PacketFileList(filePathsNeeded)
 			);
-
-			Vinyl.LOGGER.info("Displayin screen");
 
 			this.showScreen((PacketHandlerClient) packetHandler, filePathsNeeded.length);
 		}

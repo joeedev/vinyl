@@ -113,8 +113,8 @@ public class FileManagerServer extends FileManagerBase {
 		}
 	}
 
-	public CompletableFuture<String> downloadAudioFromYouTubeAndSend(String url) {
-		return this.downloadAudioFromYouTube(url)
+	public CompletableFuture<String> downloadAudioFromYtdlpAndSend(String url) {
+		return this.downloadAudioFromYtdlp(url)
 			.thenCompose(filePath -> {
 				List<CompletableFuture<?>> futures = new ArrayList<>();
 

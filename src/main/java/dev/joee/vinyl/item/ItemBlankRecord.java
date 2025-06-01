@@ -155,11 +155,11 @@ public class ItemBlankRecord extends Item {
 
 	@Environment(EnvType.CLIENT)
 	private CompletableFuture<String> downloadAudioToClient(String url) {
-		return FileManagerClient.instance.downloadAudioFromYouTube(url);
+		return FileManagerClient.instance.downloadAudioFromYtdlp(url);
 	}
 
 	@Environment(EnvType.SERVER)
 	private CompletableFuture<String> downloadAudioToServerAndSend(String url) {
-		return FileManagerServer.instance.downloadAudioFromYouTubeAndSend(url);
+		return FileManagerServer.instance.downloadAudioFromYtdlpAndSend(url);
 	}
 }

@@ -1,6 +1,5 @@
 package dev.joee.vinyl.model;
 
-import dev.joee.vinyl.Vinyl;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.item.model.ItemModel;
