@@ -12,6 +12,7 @@ import dev.joee.vinyl.tileentity.TileEntityVinylPress;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.Blocks;
+import net.minecraft.core.block.material.MaterialColor;
 import net.minecraft.core.block.tag.BlockTags;
 import net.minecraft.core.data.registry.Registries;
 import net.minecraft.core.data.registry.recipe.RecipeGroup;
@@ -109,6 +110,9 @@ public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypo
 	public void beforeGameStart() {
 		vinylPress = new BlockBuilder(MOD_ID)
 			.setTileEntity(TileEntityVinylPress::new)
+			.setHardness(5.0F)
+			.setResistance(2000.0F)
+			.setTags(BlockTags.MINEABLE_BY_PICKAXE)
 			.build(
 				"vinylPress", CONFIG.getBlockId("vinylPressId"),
 				BlockLogicVinylPress::new
@@ -117,7 +121,9 @@ public class Vinyl implements ModInitializer, RecipeEntrypoint, GameStartEntrypo
 		vinylPressActive = new BlockBuilder(MOD_ID)
 			.setTileEntity(TileEntityVinylPress::new)
 			.setLuminance(15)
-			.setTags(BlockTags.NOT_IN_CREATIVE_MENU)
+			.setHardness(5.0F)
+			.setResistance(2000.0F)
+			.setTags(BlockTags.MINEABLE_BY_PICKAXE, BlockTags.NOT_IN_CREATIVE_MENU)
 			.build(
 				"vinylPressActive", CONFIG.getBlockId("vinylPressActiveId"),
 				BlockLogicVinylPressActive::new

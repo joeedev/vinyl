@@ -54,9 +54,15 @@ public abstract class FileManagerBase {
 		}
 
 		Process finalProcess = process;
+
 		return CompletableFuture.supplyAsync(() -> {
 			try {
 				finalProcess.waitFor();
+
+				if (finalProcess.exitValue() != 0) {
+					throw new YtdlpFailedException();
+				}
+
 				return filePath;
 			} catch (InterruptedException e) {
 				throw new RuntimeException(e);

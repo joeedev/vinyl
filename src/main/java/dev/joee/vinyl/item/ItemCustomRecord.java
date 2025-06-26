@@ -117,62 +117,21 @@ public class ItemCustomRecord extends Item {
 	}
 
 	private static String propagateFormattingToWords(String input) {
-		StringBuilder output = new StringBuilder();
-		StringBuilder activeFormats = new StringBuilder();
-		StringBuilder wordBuffer = new StringBuilder();
+		String[] words = input.split(" ");
+		StringBuilder currentFormat = new StringBuilder();
 
-		Matcher formatMatcher = FORMAT_PATTERN.matcher(input);
-
-		int i = 0;
-
-		while (i < input.length()) {
-			if (formatMatcher.find(i) && formatMatcher.start() == i) {
-				String formatCode = formatMatcher.group();
-				wordBuffer.append(formatCode);
-				i += formatCode.length();
-
-				// Handle formatting state
-				if (formatCode.equals("§r")) {
-					activeFormats.setLength(0); // Reset
-				} else {
-					// Remove conflicting formats
-					if (formatCode.matches("§[0-9a-fr]")) {
-						removeColorAndReset(activeFormats);
-					}
-					activeFormats.append(formatCode);
-				}
-			} else {
-				char c = input.charAt(i);
-				if (Character.isWhitespace(c)) {
-					if (wordBuffer.length() > 0) {
-						output.append(activeFormats).append(wordBuffer);
-						wordBuffer.setLength(0);
-					}
-					output.append(c); // preserve spacing
-				} else {
-					wordBuffer.append(c);
-				}
-				i++;
+		for (int i = 0; i < words.length; i++) {
+			Matcher matcher = FORMAT_PATTERN.matcher(words[i]);
+			if (!matcher.find()) {
+				words[i] = currentFormat + words[i];
+				continue;
 			}
+
+			String formatting = matcher.group();
+			words[i] = currentFormat + words[i];
+			currentFormat.append(formatting);
 		}
 
-		if (wordBuffer.length() > 0) {
-			output.append(activeFormats).append(wordBuffer);
-		}
-
-		return output.toString();
-	}
-
-	private static void removeColorAndReset(StringBuilder formats) {
-		Matcher m = FORMAT_PATTERN.matcher(formats.toString());
-		StringBuilder newFormats = new StringBuilder();
-		while (m.find()) {
-			String f = m.group();
-			if (!f.matches("§[0-9a-fr]")) {
-				newFormats.append(f);
-			}
-		}
-		formats.setLength(0);
-		formats.append(newFormats);
+		return String.join(" ", words);
 	}
 }

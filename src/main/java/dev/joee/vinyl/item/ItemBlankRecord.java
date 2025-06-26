@@ -72,58 +72,64 @@ public class ItemBlankRecord extends Item {
 			? this.downloadAudioToClient(url)
 			: this.downloadAudioToServerAndSend(url);
 
-		filePathFuture.thenAccept(filePath -> {
-			Vinyl.LOGGER.info("Finished downloading {}", filePath);
+		filePathFuture
+			.thenAccept(filePath -> {
+				Vinyl.LOGGER.info("Finished downloading {}", filePath);
 
-			if (world.getBlockId(x, y, z) != Vinyl.vinylPressActive.id()) {
-				return;
-			}
+				if (world.getBlockId(x, y, z) != Vinyl.vinylPressActive.id()) {
+					return;
+				}
 
-			ItemStack newStack = Vinyl.customRecord.getDefaultStack();
+				ItemStack newStack = Vinyl.customRecord.getDefaultStack();
 
-			CompoundTag oldData = te.stack.getData();
-			CompoundTag newData = newStack.getData();
-			newData.putString("RecordName", oldData.getString("RecordName"));
-			newData.putString("RecordArtist", oldData.getString("RecordArtist"));
-			newData.putString("RecordFilePath", filePath);
-			newData.putInt("PrimaryColor", oldData.getInteger("PrimaryColor"));
-			newData.putInt("SecondaryColor", oldData.getInteger("SecondaryColor"));
+				CompoundTag oldData = te.stack.getData();
+				CompoundTag newData = newStack.getData();
+				newData.putString("RecordName", oldData.getString("RecordName"));
+				newData.putString("RecordArtist", oldData.getString("RecordArtist"));
+				newData.putString("RecordFilePath", filePath);
+				newData.putInt("PrimaryColor", oldData.getInteger("PrimaryColor"));
+				newData.putInt("SecondaryColor", oldData.getInteger("SecondaryColor"));
 
-			TileEntityVinylPress.shouldDropContents = false;
+				TileEntityVinylPress.shouldDropContents = false;
 
-			world.setBlockWithNotify(x, y, z, Vinyl.vinylPress.id());
+				world.setBlockWithNotify(x, y, z, Vinyl.vinylPress.id());
 
-			TileEntityVinylPress newTileEntity = new TileEntityVinylPress(newStack);
-			world.setTileEntity(x, y, z, newTileEntity);
+				TileEntityVinylPress newTileEntity = new TileEntityVinylPress(newStack);
+				world.setTileEntity(x, y, z, newTileEntity);
 
-			TileEntityVinylPress.shouldDropContents = true;
+				TileEntityVinylPress.shouldDropContents = true;
 
-			world.playSoundEffect(
-				null, SoundCategory.WORLD_SOUNDS,
-				((float) x + 0.5F), ((float) y + 0.5F), ((float) z + 0.5F),
-				"random.fizz", 0.5F,
-				2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F
-			);
-
-			for (int i = 0; i < 5; i++) {
-				world.spawnParticle(
-					"smoke", x - 0.1F, y + 0.5F, z + world.rand.nextFloat(),
-					0, 0.1, 0, 0
+				world.playSoundEffect(
+					null, SoundCategory.WORLD_SOUNDS,
+					((float) x + 0.5F), ((float) y + 0.5F), ((float) z + 0.5F),
+					"random.fizz", 0.5F,
+					2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F
 				);
-				world.spawnParticle(
-					"smoke", x + 1.1F, y + 0.5F, z + world.rand.nextFloat(),
-					0, 0.1, 0, 0
-				);
-				world.spawnParticle(
-					"smoke", x + world.rand.nextFloat(), y + 0.5F, z - 0.1F,
-					0, 0.1, 0, 0
-				);
-				world.spawnParticle(
-					"smoke", x + world.rand.nextFloat(), y + 0.5F, z + 1.1F,
-					0, 0.1, 0, 0
-				);
-			}
-		});
+
+				for (int i = 0; i < 5; i++) {
+					world.spawnParticle(
+						"smoke", x - 0.1F, y + 0.5F, z + world.rand.nextFloat(),
+						0, 0.1, 0, 0
+					);
+					world.spawnParticle(
+						"smoke", x + 1.1F, y + 0.5F, z + world.rand.nextFloat(),
+						0, 0.1, 0, 0
+					);
+					world.spawnParticle(
+						"smoke", x + world.rand.nextFloat(), y + 0.5F, z - 0.1F,
+						0, 0.1, 0, 0
+					);
+					world.spawnParticle(
+						"smoke", x + world.rand.nextFloat(), y + 0.5F, z + 1.1F,
+						0, 0.1, 0, 0
+					);
+				}
+			})
+			.exceptionally((e) -> {
+				Vinyl.LOGGER.warn("Failed to download audio!");
+				world.setBlockWithNotify(x, y, z, Vinyl.vinylPress.id());
+				return null;
+			});
 
 		return true;
 	}
